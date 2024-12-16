@@ -17,7 +17,7 @@ general_data = pd.read_csv('datasets/general_data.csv')
 employee_survey_data = pd.read_csv('datasets/employee_survey_data.csv')
 manager_survey_data = pd.read_csv('datasets/manager_survey_data.csv')
 
-employee_data = None
+employee_data: pd.DataFrame = pd.DataFrame()
 
 
 ##########################################
@@ -39,18 +39,14 @@ def create_working_time_columns():
     """
         Process in_time.csv and out_time.csv data to create working time columns in the general_data dataframe
     """
-    global general_data
+    global employee_data
     in_time = pd.read_csv('datasets/in_time.csv').astype('datetime64[ns]')
     out_time = pd.read_csv('datasets/out_time.csv').astype('datetime64[ns]')
-
-    print(in_time.head())
 
     average = (out_time - in_time)
 
     # Convert to hours
     average = average.loc[:, :] / np.timedelta64(1, 'h')
-
-    print(average.head())
 
     working_time_df = pd.DataFrame()
 
@@ -66,10 +62,12 @@ def create_working_time_columns():
     working_time_df['AverageWorkingTime'] = average.mean(axis=1)
 
     # Merge the working time data with the general data
-    general_data = general_data.merge(working_time_df, on='EmployeeID')
+    employee_data = employee_data.merge(working_time_df, on='EmployeeID')
 
 
 create_working_time_columns()
+
+print(employee_data.head())
 
 ######################
 #  Data exploration  #
