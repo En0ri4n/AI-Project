@@ -12,34 +12,34 @@ from sklearn.preprocessing import OneHotEncoder
 # Stratified Sampling
 from sklearn.model_selection import StratifiedShuffleSplit
 
-# Load the data
-general_data = pd.read_csv('datasets/general_data.csv')
-employee_survey_data = pd.read_csv('datasets/employee_survey_data.csv')
-manager_survey_data = pd.read_csv('datasets/manager_survey_data.csv')
-
-employee_data: pd.DataFrame = pd.DataFrame()
-
-
 ##########################################
 #                                        #
 #   Data Exploration and Preprocessing   #
 #                                        #
 ##########################################
 
-def merge_employee_data():
-    global employee_data
-    employee_data = general_data.merge(employee_survey_data, on='EmployeeID')
-    employee_data = employee_data.merge(manager_survey_data, on='EmployeeID')
+full_employee_data: pd.DataFrame = pd.DataFrame()
 
 
-merge_employee_data()
+def load_employee_data():
+    global full_employee_data
+
+    general_data = pd.read_csv('datasets/general_data.csv')
+    employee_survey_data = pd.read_csv('datasets/employee_survey_data.csv')
+    manager_survey_data = pd.read_csv('datasets/manager_survey_data.csv')
+
+    full_employee_data = general_data.merge(employee_survey_data, on='EmployeeID')
+    full_employee_data = full_employee_data.merge(manager_survey_data, on='EmployeeID')
+
+
+load_employee_data()
 
 
 def create_working_time_columns():
     """
         Process in_time.csv and out_time.csv data to create working time columns in the general_data dataframe
     """
-    global employee_data
+    global full_employee_data
     in_time = pd.read_csv('datasets/in_time.csv').astype('datetime64[ns]')
     out_time = pd.read_csv('datasets/out_time.csv').astype('datetime64[ns]')
 
@@ -55,41 +55,43 @@ def create_working_time_columns():
     working_time_df['EmployeeID'] = working_time_df['EmployeeID'].astype('int64')
 
     # Create a column min and max
-    working_time_df['MinimumWorkingTime'] = average.mask(average <= 0).min(axis=1)
-    working_time_df['MaximumWorkingTime'] = average.max(axis=1)
+    working_time_df['MinimumWorkingTime'] = average.mask(average <= 0).min(axis=1).round(2)
+    working_time_df['MaximumWorkingTime'] = average.max(axis=1).round(2)
 
     # Create a column average
-    working_time_df['AverageWorkingTime'] = average.mean(axis=1)
+    working_time_df['AverageWorkingTime'] = average.mean(axis=1).round(2)
 
     # Merge the working time data with the general data
-    employee_data = employee_data.merge(working_time_df, on='EmployeeID')
+    full_employee_data = full_employee_data.merge(working_time_df, on='EmployeeID')
 
 
 create_working_time_columns()
 
-print(employee_data.head())
+print(full_employee_data.head())
+
+full_employee_data.to_csv('cleaned_data.csv', index=False)
 
 ######################
 #  Data exploration  #
 ######################
 
 # Display the first 5 rows of the data
-print(general_data.head())
+print(full_employee_data.head())
 
 # Display the shape of the data
-print(general_data.shape)
+print(full_employee_data.shape)
 
 # Display the columns of the data
-print(general_data.columns)
+print(full_employee_data.columns)
 
 # Display the summary statistics of the data
-print(general_data.describe(include='all'))
+print(full_employee_data.describe(include='all'))
 
 # Display the missing values in the data
-print(general_data.isnull().sum())
+print(full_employee_data.isnull().sum())
 
 # Display the unique values in the data
-general_data.hist(bins=50, figsize=(20, 15))
+full_employee_data.hist(bins=50, figsize=(20, 15))
 plt.show()
 
 ######################
@@ -103,14 +105,14 @@ plt.show()
 # EmployeeCount : All values are 1
 # Over18 : All values are 'Y'
 # StandardHours : All values are 8
-general_data = general_data.drop(['EmployeeCount', 'Over18', 'StandardHours'], axis=1)
+full_employee_data = full_employee_data.drop(['EmployeeCount', 'Over18', 'StandardHours'], axis=1)
 
 ###
 # Encode non-numerical data
 ###
 
 cat_encoder = OneHotEncoder()
-data_cat = general_data[['Department', 'Education', 'BusinessTravel', 'Department', 'EducationField', 'JobRole', 'MaritalStatus']]
+data_cat = full_employee_data[['Department', 'Education', 'BusinessTravel', 'Department', 'EducationField', 'JobRole', 'MaritalStatus']]
 data_cat_1hot = cat_encoder.fit_transform(data_cat)
 
 # Display the encoded data
