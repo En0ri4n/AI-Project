@@ -20,6 +20,9 @@ from sklearn.model_selection import StratifiedShuffleSplit
 
 full_employee_data: pd.DataFrame = pd.DataFrame()
 
+############################
+# Data loading and merging #
+############################
 
 def load_employee_data():
     global full_employee_data
@@ -67,33 +70,6 @@ def create_working_time_columns():
 
 create_working_time_columns()
 
-print(full_employee_data.head())
-
-full_employee_data.to_csv('cleaned_data.csv', index=False)
-
-######################
-#  Data exploration  #
-######################
-
-# Display the first 5 rows of the data
-print(full_employee_data.head())
-
-# Display the shape of the data
-print(full_employee_data.shape)
-
-# Display the columns of the data
-print(full_employee_data.columns)
-
-# Display the summary statistics of the data
-print(full_employee_data.describe(include='all'))
-
-# Display the missing values in the data
-print(full_employee_data.isnull().sum())
-
-# Display the unique values in the data
-full_employee_data.hist(bins=50, figsize=(20, 15))
-plt.show()
-
 ######################
 # Data preprocessing #
 ######################
@@ -137,3 +113,26 @@ split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
 #
 # # Create a copy of the training set for further analysis
 # general_data = strat_train_set.copy()
+
+######################
+#  Data exploration  #
+######################
+
+# Display the first 5 rows of the data
+print(full_employee_data.head())
+
+# Display the shape of the data
+print(full_employee_data.shape)
+
+# Display the columns of the data
+print(full_employee_data.columns)
+
+# Display the summary statistics of the data
+print(full_employee_data.describe(include='all'))
+
+# Display the missing values in the data
+print(full_employee_data.isnull().sum())
+
+# Display the unique values in the data
+full_employee_data.hist(bins=50, figsize=(20, 15))
+plt.show()
