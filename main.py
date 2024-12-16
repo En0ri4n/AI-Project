@@ -14,12 +14,66 @@ from sklearn.model_selection import StratifiedShuffleSplit
 
 # Load the data
 general_data = pd.read_csv('datasets/general_data.csv')
+employee_survey_data = pd.read_csv('datasets/employee_survey_data.csv')
+manager_survey_data = pd.read_csv('datasets/manager_survey_data.csv')
+
+employee_data = None
+
 
 ##########################################
 #                                        #
 #   Data Exploration and Preprocessing   #
 #                                        #
 ##########################################
+
+def merge_employee_data():
+    global employee_data
+    employee_data = general_data.merge(employee_survey_data, on='EmployeeID')
+    employee_data = employee_data.merge(manager_survey_data, on='EmployeeID')
+
+
+merge_employee_data()
+
+
+def create_working_time_columns():
+    """
+        Process in_time.csv and out_time.csv data to create working time columns in the general_data dataframe
+    """
+    global general_data
+    in_time = pd.read_csv('datasets/in_time.csv').astype('datetime64[ns]')
+    out_time = pd.read_csv('datasets/out_time.csv').astype('datetime64[ns]')
+
+    print(in_time.head())
+
+    average = (out_time - in_time)
+
+    # Convert to hours
+    average = average.loc[:, :] / np.timedelta64(1, 'h')
+
+    print(average.head())
+
+    working_time_df = pd.DataFrame()
+
+    # Create a column EmployeeID
+    working_time_df['EmployeeID'] = in_time.iloc[:, 0]
+    working_time_df['EmployeeID'] = working_time_df['EmployeeID'].astype('int64')
+
+    # Create a column min and max
+    working_time_df['MinimumWorkingTime'] = average.mask(average <= 0).min(axis=1)
+    working_time_df['MaximumWorkingTime'] = average.max(axis=1)
+
+    # Create a column average
+    working_time_df['AverageWorkingTime'] = average.mean(axis=1)
+
+    # Merge the working time data with the general data
+    general_data = general_data.merge(working_time_df, on='EmployeeID')
+
+
+create_working_time_columns()
+
+######################
+#  Data exploration  #
+######################
 
 # Display the first 5 rows of the data
 print(general_data.head())
@@ -40,16 +94,18 @@ print(general_data.isnull().sum())
 general_data.hist(bins=50, figsize=(20, 15))
 plt.show()
 
+######################
+# Data preprocessing #
+######################
+
 ###
 # Remove useless columns
 ###
 
 # EmployeeCount : All values are 1
-# EmployeeID : Unique identifier
 # Over18 : All values are 'Y'
 # StandardHours : All values are 8
-general_data = general_data.drop(['EmployeeCount', 'EmployeeID', 'Over18', 'StandardHours'], axis=1)
-
+general_data = general_data.drop(['EmployeeCount', 'Over18', 'StandardHours'], axis=1)
 
 ###
 # Encode non-numerical data
