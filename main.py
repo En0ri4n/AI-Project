@@ -20,6 +20,7 @@ from sklearn.model_selection import StratifiedShuffleSplit
 
 full_employee_data: pd.DataFrame = pd.DataFrame()
 
+
 ############################
 # Data loading and merging #
 ############################
@@ -43,10 +44,10 @@ def create_working_time_columns():
         Process in_time.csv and out_time.csv data to create working time columns in the general_data dataframe
     """
     global full_employee_data
-    in_time = pd.read_csv('datasets/in_time.csv').astype('datetime64[ns]')
-    out_time = pd.read_csv('datasets/out_time.csv').astype('datetime64[ns]')
+    in_time: pd.DataFrame = pd.read_csv('datasets/in_time.csv').astype('datetime64[s]')
+    out_time = pd.read_csv('datasets/out_time.csv').astype('datetime64[s]')
 
-    average = (out_time - in_time)
+    average: pd.DataFrame = (out_time - in_time)
 
     # Convert to hours
     average = average.loc[:, :] / np.timedelta64(1, 'h')
@@ -58,8 +59,8 @@ def create_working_time_columns():
     working_time_df['EmployeeID'] = working_time_df['EmployeeID'].astype('int64')
 
     # Create a column min and max
-    working_time_df['MinimumWorkingTime'] = average.mask(average <= 0).min(axis=1).round(2)
-    working_time_df['MaximumWorkingTime'] = average.max(axis=1).round(2)
+    working_time_df['AverageArrivalTime'] = in_time.iloc[:, 1:].mean(axis=1)
+    working_time_df['AverageDepartureTime'] = out_time.iloc[:, 1:].max(axis=1)
 
     # Create a column average
     working_time_df['AverageWorkingTime'] = average.mean(axis=1).round(2)
@@ -81,14 +82,14 @@ create_working_time_columns()
 # EmployeeCount : All values are 1
 # Over18 : All values are 'Y'
 # StandardHours : All values are 8
-full_employee_data = full_employee_data.drop(['EmployeeCount', 'Over18', 'StandardHours'], axis=1)
+full_employee_data = full_employee_data.drop(['EmployeeCount', 'Over18', 'StandardHours', 'MaritalStatus'], axis=1)
 
 ###
 # Encode non-numerical data
 ###
 
 cat_encoder = OneHotEncoder()
-data_cat = full_employee_data[['Department', 'Education', 'BusinessTravel', 'Department', 'EducationField', 'JobRole', 'MaritalStatus']]
+data_cat = full_employee_data[['Department', 'Education', 'BusinessTravel', 'Department', 'EducationField', 'JobRole']]
 data_cat_1hot = cat_encoder.fit_transform(data_cat)
 
 # Display the encoded data
@@ -114,8 +115,10 @@ split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
 # # Create a copy of the training set for further analysis
 # general_data = strat_train_set.copy()
 
+full_employee_data.to_csv('cleaned_data.csv', index=False)
+
 ######################
-#  Data exploration  #
+#     Data view      #
 ######################
 
 # Display the first 5 rows of the data
