@@ -12,16 +12,19 @@ class StatisticsHelper:
         self.y_pred = _pred
 
     def show_accuracy(self):
-        accuracy = accuracy_score(self.y_test, self.y_pred)
-        print(f'Accuracy: {accuracy}')
+        print("---- Accuracy ----")
+        print(f'Accuracy: {accuracy_score(self.y_test, self.y_pred)}')
+        print("------------------")
 
     def show_roc_auc_score(self):
-        roc_auc = roc_auc_score(self.y_test, self.y_pred)
-        print(f'ROC AUC Score: {roc_auc}')
+        print("---- ROC AUC Score ----")
+        print(f'ROC AUC Score: {roc_auc_score(self.y_test, self.y_pred)}')
+        print("------------------------")
 
     def show_classification_report(self):
-        print('Classification Report:')
-        print(classification_report(self.y_test, self.y_pred))
+        print("---- Classification Report ----")
+        print(f'{classification_report(self.y_test, self.y_pred)}')
+        print("-------------------------------")
 
     def show_confusion_matrix(self):
         cm = confusion_matrix(self.y_test, self.y_pred)
@@ -41,7 +44,9 @@ class StatisticsHelper:
         plt.show()
 
     def show_cross_val_score(self):
-        scores = cross_val_score(self.model, self.X, self.y, cv=5)
+        scores = cross_val_score(self.model, self.X, self.y, cv=5, scoring='accuracy')
+        print("--- Cross Validation Scores ---")
         print(f'Cross-validated scores: {scores}')
         print(f'Mean accuracy: {scores.mean()}')
         print(f'Standard deviation: {scores.std()}')
+        print("-------------------------------")
