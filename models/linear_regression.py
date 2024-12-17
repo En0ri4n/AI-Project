@@ -21,5 +21,6 @@ lr_model.fit(X_train, y_train)
 # Make predictions
 y_pred = lr_model.predict(X_test)
 
+# Display the statistics
 stat_helper = StatisticsHelper(X, y, lr_model, y_test, y_pred)
 stat_helper.show_regression_statistics()

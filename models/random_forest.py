@@ -1,15 +1,15 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
+
 from statistics_helper import StatisticsHelper
 
 # Load the data
-# Assuming `full_employee_data` is already loaded as a DataFrame
 full_employee_data: pd.DataFrame = pd.read_csv('./full_employee_data_cleaned.csv')
 
-# Prepare the data
 target_column = 'Attrition'
-# Replace 'target_column' with the actual name of the target column
+
+# Prepare the data
 X = full_employee_data.drop(target_column, axis=1)
 y = full_employee_data[target_column]
 
@@ -23,5 +23,6 @@ rf_model.fit(X_train, y_train)
 # Make predictions
 y_pred = rf_model.predict(X_test)
 
+# Display the statistics
 stats_helper = StatisticsHelper(X, y, rf_model, y_test, y_pred)
 stats_helper.show_all()

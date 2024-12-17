@@ -4,6 +4,9 @@ from sklearn.model_selection import cross_val_score
 
 
 class StatisticsHelper:
+    """
+    A class to help with displaying statistics for classification and regression models.
+    """
     def __init__(self, X, y, model, y_test, _pred):
         self.X = X
         self.y = y
@@ -12,21 +15,33 @@ class StatisticsHelper:
         self.y_pred = _pred
 
     def show_accuracy(self):
+        """
+        Display the accuracy of the model.
+        """
         print("---- Accuracy ----")
         print(f'Accuracy: {accuracy_score(self.y_test, self.y_pred)}')
         print("------------------")
 
     def show_roc_auc_score(self):
+        """
+        Display the ROC AUC score of the model.
+        """
         print("---- ROC AUC Score ----")
         print(f'ROC AUC Score: {roc_auc_score(self.y_test, self.y_pred)}')
         print("------------------------")
 
     def show_classification_report(self):
+        """
+        Display the classification report of the model.
+        """
         print("---- Classification Report ----")
         print(f'{classification_report(self.y_test, self.y_pred)}')
         print("-------------------------------")
 
     def show_confusion_matrix(self):
+        """
+        Display the confusion matrix of the model.
+        """
         cm = confusion_matrix(self.y_test, self.y_pred)
 
         plt.imshow(cm, cmap='Blues', interpolation='nearest')
@@ -44,6 +59,9 @@ class StatisticsHelper:
         plt.show()
 
     def show_cross_val_score(self):
+        """
+        Display the cross-validated scores of the model.
+        """
         scores = cross_val_score(self.model, self.X, self.y, cv=5, scoring='accuracy')
         print("--- Cross Validation Scores ---")
         print(f'Cross-validated scores: {scores}')
@@ -52,6 +70,9 @@ class StatisticsHelper:
         print("-------------------------------")
 
     def show_regression_statistics(self):
+        """
+        Display the regression statistics of the model.
+        """
         print("---- Regression Statistics ----")
         mse = mean_squared_error(self.y_test, self.y_pred)
         r2 = r2_score(self.y_test, self.y_pred)
@@ -60,6 +81,9 @@ class StatisticsHelper:
         print("-----------------------------")
 
     def show_all(self):
+        """
+        Display all the statistics.
+        """
         self.show_accuracy()
         self.show_roc_auc_score()
         self.show_classification_report()
