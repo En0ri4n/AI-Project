@@ -17,12 +17,12 @@ y = full_employee_data[target_column]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=True, random_state=42)
 
 # Train the Random Forest model
-rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model = RandomForestClassifier(n_estimators=1000, random_state=42)
 rf_model.fit(X_train, y_train)
 
 # Make predictions
 y_pred = rf_model.predict(X_test)
 
 # Display the statistics
-stats_helper = StatisticsHelper(X, y, rf_model, y_test, y_pred)
-stats_helper.show_all(is_regression=False)
+stats_helper = StatisticsHelper(X_train, y_train, rf_model, y_test, y_pred)
+stats_helper.show_all()

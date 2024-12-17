@@ -1,5 +1,5 @@
 from matplotlib import pyplot as plt
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, roc_auc_score, mean_squared_error, r2_score
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, roc_auc_score, mean_squared_error, r2_score, roc_curve
 from sklearn.model_selection import cross_val_score
 
 
@@ -8,9 +8,9 @@ class StatisticsHelper:
     A class to help with displaying statistics for classification and regression models.
     """
 
-    def __init__(self, X, y, model, y_test, _pred):
-        self.X = X
-        self.y = y
+    def __init__(self, x_train, y_train, model, y_test, _pred):
+        self.x_train = x_train
+        self.y_train = y_train
         self.model = model
         self.y_test = y_test
         self.y_pred = _pred
@@ -30,6 +30,24 @@ class StatisticsHelper:
         print("---- ROC AUC Score ----")
         print(f'ROC AUC Score: {roc_auc_score(self.y_test, self.y_pred)}')
         print("------------------------")
+
+    def show_roc_curve(self):
+        """
+        Display the ROC curve of the model.
+        """
+        roc_auc = roc_auc_score(self.y_test, self.y_pred)
+        fpr, tpr, _ = roc_curve(self.y_test, self.y_pred)
+
+        plt.figure()
+        plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = %0.2f)' % roc_auc)
+        plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('Receiver Operating Characteristic')
+        plt.legend(loc="lower right")
+        plt.show()
 
     def show_classification_report(self):
         """
@@ -63,7 +81,7 @@ class StatisticsHelper:
         """
         Display the cross-validated scores of the model.
         """
-        scores = cross_val_score(self.model, self.X, self.y, cv=5, scoring='accuracy')
+        scores = cross_val_score(self.model, self.x_train, self.y_train, cv=5, scoring='accuracy')
         print("--- Cross Validation Scores ---")
         print(f'Cross-validated scores: {scores}')
         print(f'Mean accuracy: {scores.mean()}')
@@ -81,16 +99,14 @@ class StatisticsHelper:
         print(f'R^2 Score: {r2}')
         print("-----------------------------")
 
-    def show_all(self, is_regression: bool = False):
+    def show_all(self):
         """
         Display all the statistics.
         """
         self.show_accuracy()
-
-        if is_regression:
-            self.show_regression_statistics()
-        else:
-            self.show_roc_auc_score()
-            self.show_classification_report()
-            self.show_confusion_matrix()
-            self.show_cross_val_score()
+        self.show_roc_auc_score()
+        self.show_roc_curve()
+        self.show_classification_report()
+        self.show_confusion_matrix()
+        self.show_cross_val_score()
+        self.show_regression_statistics()
