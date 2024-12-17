@@ -5,7 +5,7 @@ from statistics_helper import StatisticsHelper
 
 # Load the data
 # Assuming `full_employee_data` is already loaded as a DataFrame
-full_employee_data: pd.DataFrame = pd.read_csv('full_employee_data_cleaned.csv')
+full_employee_data: pd.DataFrame = pd.read_csv('./full_employee_data_cleaned.csv')
 
 # Prepare the data
 target_column = 'Attrition'
@@ -24,8 +24,4 @@ rf_model.fit(X_train, y_train)
 y_pred = rf_model.predict(X_test)
 
 stats_helper = StatisticsHelper(X, y, rf_model, y_test, y_pred)
-stats_helper.show_accuracy()
-stats_helper.show_classification_report()
-stats_helper.show_confusion_matrix()
-stats_helper.show_cross_val_score()
-stats_helper.show_roc_auc_score()
+stats_helper.show_all()

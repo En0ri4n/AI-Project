@@ -1,5 +1,5 @@
 from matplotlib import pyplot as plt
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, roc_auc_score
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, roc_auc_score, mean_squared_error, r2_score
 from sklearn.model_selection import cross_val_score
 
 
@@ -50,3 +50,19 @@ class StatisticsHelper:
         print(f'Mean accuracy: {scores.mean()}')
         print(f'Standard deviation: {scores.std()}')
         print("-------------------------------")
+
+    def show_regression_statistics(self):
+        print("---- Regression Statistics ----")
+        mse = mean_squared_error(self.y_test, self.y_pred)
+        r2 = r2_score(self.y_test, self.y_pred)
+        print(f'Mean Squared Error: {mse}')
+        print(f'R^2 Score: {r2}')
+        print("-----------------------------")
+
+    def show_all(self):
+        self.show_accuracy()
+        self.show_roc_auc_score()
+        self.show_classification_report()
+        self.show_confusion_matrix()
+        self.show_cross_val_score()
+        self.show_regression_statistics()
