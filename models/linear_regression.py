@@ -23,4 +23,4 @@ y_pred = lr_model.predict(X_test)
 
 # Display the statistics
 stat_helper = StatisticsHelper(X, y, lr_model, y_test, y_pred)
-stat_helper.show_regression_statistics()
+stat_helper.show_all(is_regression=True)

@@ -25,4 +25,4 @@ y_pred = rf_model.predict(X_test)
 
 # Display the statistics
 stats_helper = StatisticsHelper(X, y, rf_model, y_test, y_pred)
-stats_helper.show_all()
+stats_helper.show_all(is_regression=False)

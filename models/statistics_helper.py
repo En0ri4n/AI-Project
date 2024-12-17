@@ -7,6 +7,7 @@ class StatisticsHelper:
     """
     A class to help with displaying statistics for classification and regression models.
     """
+
     def __init__(self, X, y, model, y_test, _pred):
         self.X = X
         self.y = y
@@ -80,13 +81,16 @@ class StatisticsHelper:
         print(f'R^2 Score: {r2}')
         print("-----------------------------")
 
-    def show_all(self):
+    def show_all(self, is_regression: bool = False):
         """
         Display all the statistics.
         """
         self.show_accuracy()
-        self.show_roc_auc_score()
-        self.show_classification_report()
-        self.show_confusion_matrix()
-        self.show_cross_val_score()
-        self.show_regression_statistics()
+
+        if is_regression:
+            self.show_regression_statistics()
+        else:
+            self.show_roc_auc_score()
+            self.show_classification_report()
+            self.show_confusion_matrix()
+            self.show_cross_val_score()
